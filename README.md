@@ -35,3 +35,6 @@ sudo systemctl stop displaypi.service
 - To change the time between URL changes, edit `INTERVAL_SECONDS` in
   `displaypi.py`.
 - Set `INTERVAL_SECONDS` to `0` to disable automatic rotation.
+- Set `RELOAD_SECONDS` to a number greater than `0` to force reload of the
+  single configured URL at that interval. Leave it at `0` to keep the browser
+  open indefinitely when only one URL is present.
