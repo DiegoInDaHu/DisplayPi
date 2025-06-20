@@ -8,7 +8,7 @@ This simple script opens a single URL in fullscreen (kiosk) mode using the
 import subprocess
 
 # URL to display
-URL = "https://www.flightradar24.com/42.74,-1.57/8"
+URL = "https://www.flightradar24.com/simple/"
 
 
 CHROMIUM_CMD = [
