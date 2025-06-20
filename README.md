@@ -1,6 +1,6 @@
 # DisplayPi
 
-This repository contains a small program to display web pages in full screen on Raspberry Pi OS (64‑bit). It starts with `https://www.flightradar24.com` and can rotate through additional URLs if you add them to the script.
+This repository contains a small program to display web pages in full screen on Raspberry Pi OS (64‑bit). It starts with `https://www.flightradar24.com/42.74,-1.57/8` and can rotate through additional URLs if you add them to the script.
 
 ## Requirements
 - Raspberry Pi OS 64‑bit with graphical environment
@@ -14,7 +14,7 @@ sudo apt-get install -y chromium-browser
 ```
 
 ## Usage
-1. Copy this repository to `/home/diego/DisplayPi` on your Raspberry Pi.
+1. Copy this repository to `/home/pi/DisplayPi` on your Raspberry Pi.
 2. Optionally edit `displaypi.py` and add more URLs in the `URLS` list.
 3. Install the systemd service:
 

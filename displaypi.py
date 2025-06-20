@@ -12,7 +12,7 @@ from typing import List
 
 # List of URLs to display
 URLS: List[str] = [
-    "https://www.flightradar24.com",
+    "https://www.flightradar24.com/42.74,-1.57/8",
     # Add more URLs here
 ]
 
