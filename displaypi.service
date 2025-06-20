@@ -4,10 +4,10 @@ After=network.target
 
 [Service]
 Type=simple
-User=diego
+User=pi
 Environment=DISPLAY=:0
 Environment=XDG_RUNTIME_DIR=/run/user/1000
-ExecStart=/usr/bin/python3 /home/diego/DisplayPi/displaypi.py
+ExecStart=/usr/bin/python3 /home/pi/DisplayPi/displaypi.py
 Restart=on-failure
 
 [Install]
