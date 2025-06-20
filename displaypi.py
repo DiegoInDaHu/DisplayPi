@@ -41,6 +41,8 @@ def switch_tab(tab_index: int) -> None:
 
 
 def main() -> None:
+    # Ensure any previous GPIO configuration is cleared before setting up
+    GPIO.cleanup()
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
