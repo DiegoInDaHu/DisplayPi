@@ -1,6 +1,6 @@
 # DisplayPi
 
-This repository contains a small program to display a web page in full screen on Raspberry Pi OS (64‑bit). By default it opens `https://www.flightradar24.com/42.74,-1.57/8`.
+This repository contains a small program to display a web page in full screen on Raspberry Pi OS (64‑bit). By default it opens `https://www.flightradar24.com/simple/`.
 
 ## Requirements
 - Raspberry Pi OS 64‑bit with graphical environment
