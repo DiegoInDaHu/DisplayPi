@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=pi
 Environment=DISPLAY=:0
-ExecStart=/usr/bin/python3 /home/pi/DisplayPi/displaypi.py
+ExecStart=/usr/bin/python3 /home/diego/DisplayPi/displaypi.py
 Restart=on-failure
 
 [Install]

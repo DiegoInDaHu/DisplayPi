@@ -14,7 +14,7 @@ sudo apt-get install -y chromium-browser
 ```
 
 ## Usage
-1. Copy this repository to `/home/pi/DisplayPi` on your Raspberry Pi.
+1. Copy this repository to `/home/diego/DisplayPi` on your Raspberry Pi.
 2. Optionally edit `displaypi.py` and add more URLs in the `URLS` list.
 3. Install the systemd service:
 
