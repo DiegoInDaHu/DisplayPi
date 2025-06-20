@@ -4,12 +4,13 @@ This repository contains a small program to display web pages in full screen on 
 
 ## Requirements
 - Raspberry Pi OS 64‑bit with graphical environment
-- Python 3 with `PyQt5` and `PyQtWebEngine`
+- Python 3
+- `chromium-browser`
 
-Install the dependencies:
+Install Chromium if it is not already available:
 ```bash
 sudo apt-get update
-sudo apt-get install -y python3-pyqt5 python3-pyqt5.qtwebengine
+sudo apt-get install -y chromium-browser
 ```
 
 ## Usage
@@ -31,5 +32,6 @@ sudo systemctl stop displaypi.service
 ```
 
 ## Customization
-- To change the time between URL changes, adjust `INTERVAL_SECONDS` inside `displaypi.py`.
+- To change the time between URL changes, edit `INTERVAL_SECONDS` in
+  `displaypi.py`.
 - Set `INTERVAL_SECONDS` to `0` to disable automatic rotation.
