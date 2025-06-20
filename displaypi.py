@@ -1,28 +1,21 @@
 #!/usr/bin/env python3
 """DisplayPi - simple kiosk launcher using Chromium.
 
-This script opens a list of URLs in fullscreen (kiosk) mode using the
-`chromium-browser` application that comes with Raspberry Pi OS.  The
-browser window is restarted for each URL when rotation is enabled.
+This simple script opens a single URL in fullscreen (kiosk) mode using the
+``chromium-browser`` application that comes with Raspberry Pi OS. It monitors
+the page and reloads it only when a load failure is detected.
 """
 
 import subprocess
 import time
-from typing import List
+import requests
 
-# List of URLs to display
-URLS: List[str] = [
-    "https://www.flightradar24.com/42.74,-1.57/8",
-    # Add more URLs here
-]
+# URL to display
+URL = "https://www.flightradar24.com/42.74,-1.57/8"
 
-# Seconds to wait before showing the next URL when multiple URLs are defined.
-# Set to 0 to disable rotation.
-INTERVAL_SECONDS = 60
-
-# Seconds after which the page is reloaded even when only one URL is
-# configured. Set to 0 to disable automatic reload.
-RELOAD_SECONDS = 0
+# Seconds between checks to verify that the page loaded correctly. When the
+# check fails, Chromium is restarted to reload the page.
+CHECK_SECONDS = 30
 
 CHROMIUM_CMD = [
     "chromium-browser",
@@ -37,31 +30,25 @@ def launch_chromium(url: str) -> subprocess.Popen:
     return subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
 
+def page_loaded(url: str) -> bool:
+    """Return ``True`` if ``url`` is reachable (HTTP 200)."""
+    try:
+        resp = requests.get(url, timeout=10)
+        return resp.status_code == 200
+    except requests.RequestException:
+        return False
+
+
 def main() -> None:
-    index = 0
-    proc = launch_chromium(URLS[index])
+    proc = launch_chromium(URL)
 
     try:
         while True:
-            if len(URLS) == 1:
-                if RELOAD_SECONDS > 0:
-                    time.sleep(RELOAD_SECONDS)
-                    proc.terminate()
-                    proc.wait()
-                    proc = launch_chromium(URLS[0])
-                    continue
-                # Wait forever if reload is disabled.
+            time.sleep(CHECK_SECONDS)
+            if not page_loaded(URL):
+                proc.terminate()
                 proc.wait()
-                break
-            if INTERVAL_SECONDS <= 0:
-                # Rotation disabled when more than one URL is present.
-                proc.wait()
-                break
-            time.sleep(INTERVAL_SECONDS)
-            proc.terminate()
-            proc.wait()
-            index = (index + 1) % len(URLS)
-            proc = launch_chromium(URLS[index])
+                proc = launch_chromium(URL)
     except KeyboardInterrupt:
         pass
     finally:
