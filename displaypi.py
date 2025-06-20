@@ -55,9 +55,17 @@ def main() -> None:
         current_tab = 2 if current_tab == 1 else 1
         switch_tab(current_tab)
 
-    GPIO.add_event_detect(
-        BUTTON_PIN, GPIO.FALLING, callback=handle_button, bouncetime=300
-    )
+    try:
+        GPIO.add_event_detect(
+            BUTTON_PIN,
+            GPIO.FALLING,
+            callback=handle_button,
+            bouncetime=300,
+        )
+    except Exception as exc:  # pylint: disable=broad-except
+        # Catch any error so the program can report issues with GPIO setup
+        print(f"Failed to add GPIO event detection: {exc!r}")
+        raise
 
     try:
         proc.wait()
