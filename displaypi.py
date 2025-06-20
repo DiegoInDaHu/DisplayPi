@@ -16,8 +16,13 @@ URLS: List[str] = [
     # Add more URLs here
 ]
 
-# Seconds to wait before showing the next URL. Set to 0 to disable rotation.
+# Seconds to wait before showing the next URL when multiple URLs are defined.
+# Set to 0 to disable rotation.
 INTERVAL_SECONDS = 60
+
+# Seconds after which the page is reloaded even when only one URL is
+# configured. Set to 0 to disable automatic reload.
+RELOAD_SECONDS = 0
 
 CHROMIUM_CMD = [
     "chromium-browser",
@@ -38,8 +43,18 @@ def main() -> None:
 
     try:
         while True:
-            if INTERVAL_SECONDS <= 0 or len(URLS) == 1:
-                # Wait forever if rotation is disabled.
+            if len(URLS) == 1:
+                if RELOAD_SECONDS > 0:
+                    time.sleep(RELOAD_SECONDS)
+                    proc.terminate()
+                    proc.wait()
+                    proc = launch_chromium(URLS[0])
+                    continue
+                # Wait forever if reload is disabled.
+                proc.wait()
+                break
+            if INTERVAL_SECONDS <= 0:
+                # Rotation disabled when more than one URL is present.
                 proc.wait()
                 break
             time.sleep(INTERVAL_SECONDS)
