@@ -56,6 +56,22 @@ def main() -> None:
 
     controller = kb.Controller()
 
+    def send_ctrl_tab(shift: bool = False) -> None:
+        """Simulate Ctrl+Tab (optionally with Shift) using xdotool if available."""
+        cmd = ["xdotool", "key", "--clearmodifiers", "ctrl+"]
+        cmd[-1] += "shift+Tab" if shift else "Tab"
+        try:
+            subprocess.run(cmd, check=True)
+        except (FileNotFoundError, subprocess.CalledProcessError):
+            controller.press(kb.Key.ctrl)
+            if shift:
+                controller.press(kb.Key.shift)
+            controller.press(kb.Key.tab)
+            controller.release(kb.Key.tab)
+            if shift:
+                controller.release(kb.Key.shift)
+            controller.release(kb.Key.ctrl)
+
     def show_button():
         root = Tk()
         root.overrideredirect(True)
@@ -65,10 +81,7 @@ def main() -> None:
         root.geometry(f"{size}x{size}+0+{screen_height - size}")
 
         def on_click():
-            controller.press(kb.Key.ctrl)
-            controller.press(kb.Key.tab)
-            controller.release(kb.Key.tab)
-            controller.release(kb.Key.ctrl)
+            send_ctrl_tab()
 
         btn = Button(root, text="\u21c6", command=on_click)
         btn.pack(fill="both", expand=True)
@@ -76,17 +89,9 @@ def main() -> None:
 
     def on_press(key):
         if key == kb.Key.f5:
-            controller.press(kb.Key.ctrl)
-            controller.press(kb.Key.tab)
-            controller.release(kb.Key.tab)
-            controller.release(kb.Key.ctrl)
+            send_ctrl_tab()
         elif key == kb.Key.f6:
-            controller.press(kb.Key.ctrl)
-            controller.press(kb.Key.shift)
-            controller.press(kb.Key.tab)
-            controller.release(kb.Key.tab)
-            controller.release(kb.Key.shift)
-            controller.release(kb.Key.ctrl)
+            send_ctrl_tab(shift=True)
 
     listener = kb.Listener(on_press=on_press)
     listener.start()

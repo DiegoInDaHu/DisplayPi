@@ -7,6 +7,7 @@ This repository contains a small program to display one or more web pages in ful
 - Python 3
 - `chromium-browser`
 - `pynput` Python package (install with `pip install -r requirements.txt`)
+- `xdotool` (install with `sudo apt-get install -y xdotool`)
 
 Install Chromium if it is not already available:
 ```bash
@@ -34,4 +35,4 @@ sudo systemctl stop displaypi.service
 
 ## Customization
 Use the `--urls` argument to select which predefined pages are opened as tabs. While Chromium is running press **F5** to switch to the next tab and **F6** to go back. Edit `displaypi.py` if you want to add more URLs or adjust how Chromium is launched.
-By default a small button appears in the lower left corner that performs the same action as **Ctrl+Tab** to quickly cycle through the opened tabs. Use the `--no-button` option if you prefer to hide it.
+By default a small button appears in the lower left corner that performs the same action as **Ctrl+Tab** to quickly cycle through the opened tabs. The implementation relies on `xdotool` to send the shortcut. Use the `--no-button` option if you prefer to hide it.
