@@ -10,6 +10,11 @@ import subprocess
 import threading
 from typing import List
 
+import keyboard
+import pyautogui
+
+pyautogui.FAILSAFE = False
+
 
 
 # URLs that can be displayed. ``flightradar`` is the default page while
@@ -54,33 +59,29 @@ def main() -> None:
     urls = [URLS[name] for name in args.urls]
     proc = launch_chromium(urls)
 
-    controller = kb.Controller()
 
     def send_ctrl_tab(shift: bool = False) -> None:
-        """Simulate Ctrl+Tab (optionally with Shift) sending the shortcut to
-        Chromium if possible."""
-        key = "ctrl+" + ("shift+Tab" if shift else "Tab")
+        """Send ``Ctrl+Tab`` (or ``Ctrl+Shift+Tab``) to the Chromium window."""
+        key = "ctrl+shift+Tab" if shift else "ctrl+Tab"
         try:
-            # Activate Chromium window before sending the key to ensure the
-            # browser has focus. ``--class chromium`` matches ``chromium-browser``.
             window_id = subprocess.check_output(
-                ["xdotool", "search", "--onlyvisible", "--class", "chromium"],
+                [
+                    "xdotool",
+                    "search",
+                    "--onlyvisible",
+                    "--pid",
+                    str(proc.pid),
+                ],
                 text=True,
             ).splitlines()[0]
             subprocess.run(["xdotool", "windowactivate", "--sync", window_id], check=True)
-            subprocess.run(
-                ["xdotool", "key", "--window", window_id, "--clearmodifiers", key],
-                check=True,
-            )
+            subprocess.run(["xdotool", "key", "--window", window_id, "--clearmodifiers", key], check=True)
         except Exception:
-            controller.press(kb.Key.ctrl)
+            combo = ["ctrl"]
             if shift:
-                controller.press(kb.Key.shift)
-            controller.press(kb.Key.tab)
-            controller.release(kb.Key.tab)
-            if shift:
-                controller.release(kb.Key.shift)
-            controller.release(kb.Key.ctrl)
+                combo.append("shift")
+            combo.append("tab")
+            pyautogui.hotkey(*combo)
 
     def show_button():
         root = Tk()
