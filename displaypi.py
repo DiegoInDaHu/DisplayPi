@@ -7,6 +7,7 @@ This simple script opens a single URL in fullscreen (kiosk) mode using the
 
 import argparse
 import subprocess
+import threading
 from typing import List
 
 
@@ -40,14 +41,38 @@ def main() -> None:
         default=list(URLS.keys()),
         help="Pages to open as tabs",
     )
+    parser.add_argument(
+        "--no-button",
+        action="store_true",
+        help="Do not show the control-tab overlay button",
+    )
     args = parser.parse_args()
 
     from pynput import keyboard as kb
+    from tkinter import Tk, Button
 
     urls = [URLS[name] for name in args.urls]
     proc = launch_chromium(urls)
 
     controller = kb.Controller()
+
+    def show_button():
+        root = Tk()
+        root.overrideredirect(True)
+        root.attributes("-topmost", True)
+        size = 40
+        screen_height = root.winfo_screenheight()
+        root.geometry(f"{size}x{size}+0+{screen_height - size}")
+
+        def on_click():
+            controller.press(kb.Key.ctrl)
+            controller.press(kb.Key.tab)
+            controller.release(kb.Key.tab)
+            controller.release(kb.Key.ctrl)
+
+        btn = Button(root, text="\u21c6", command=on_click)
+        btn.pack(fill="both", expand=True)
+        root.mainloop()
 
     def on_press(key):
         if key == kb.Key.f5:
@@ -65,6 +90,11 @@ def main() -> None:
 
     listener = kb.Listener(on_press=on_press)
     listener.start()
+
+    button_thread = None
+    if not args.no_button:
+        button_thread = threading.Thread(target=show_button, daemon=True)
+        button_thread.start()
 
     try:
         proc.wait()
