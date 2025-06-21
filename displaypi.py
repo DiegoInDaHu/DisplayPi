@@ -10,6 +10,8 @@ import subprocess
 import threading
 from typing import List
 
+import keyboard
+
 
 
 # URLs that can be displayed. ``flightradar`` is the default page while
@@ -54,33 +56,19 @@ def main() -> None:
     urls = [URLS[name] for name in args.urls]
     proc = launch_chromium(urls)
 
-    controller = kb.Controller()
 
     def send_ctrl_tab(shift: bool = False) -> None:
-        """Simulate Ctrl+Tab (optionally with Shift) sending the shortcut to
-        Chromium if possible."""
-        key = "ctrl+" + ("shift+Tab" if shift else "Tab")
+        """Simulate ``Ctrl+Tab`` (optionally with Shift) targeting Chromium."""
+        combo = "ctrl+shift+tab" if shift else "ctrl+tab"
         try:
-            # Activate Chromium window before sending the key to ensure the
-            # browser has focus. ``--class chromium`` matches ``chromium-browser``.
             window_id = subprocess.check_output(
                 ["xdotool", "search", "--onlyvisible", "--class", "chromium"],
                 text=True,
             ).splitlines()[0]
             subprocess.run(["xdotool", "windowactivate", "--sync", window_id], check=True)
-            subprocess.run(
-                ["xdotool", "key", "--window", window_id, "--clearmodifiers", key],
-                check=True,
-            )
         except Exception:
-            controller.press(kb.Key.ctrl)
-            if shift:
-                controller.press(kb.Key.shift)
-            controller.press(kb.Key.tab)
-            controller.release(kb.Key.tab)
-            if shift:
-                controller.release(kb.Key.shift)
-            controller.release(kb.Key.ctrl)
+            pass
+        keyboard.send(combo)
 
     def show_button():
         root = Tk()
