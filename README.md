@@ -1,11 +1,12 @@
 # DisplayPi
 
-This repository contains a small program to display a web page in full screen on Raspberry Pi OS (64‑bit). By default it opens `https://www.flightradar24.com/simple/`. It can also display a locally hosted page at `http://localhost:3000`.
+This repository contains a small program to display one or more web pages in fullscreen on Raspberry Pi OS (64‑bit). By default it opens all predefined pages (`flightradar` and `local`).
 
 ## Requirements
 - Raspberry Pi OS 64‑bit with graphical environment
 - Python 3
 - `chromium-browser`
+- `pynput` Python package (install with `pip install -r requirements.txt`)
 
 Install Chromium if it is not already available:
 ```bash
@@ -15,7 +16,7 @@ sudo apt-get install -y chromium-browser
 
 ## Usage
 1. Copy this repository to `/home/pi/DisplayPi` on your Raspberry Pi.
-2. Run `displaypi.py --url local` to display the local page or edit the file to add more options.
+2. Run `displaypi.py --urls local` to display only the local page or omit the option to load all available pages as tabs.
 3. Install the systemd service:
 
 ```bash
@@ -32,4 +33,4 @@ sudo systemctl stop displaypi.service
 ```
 
 ## Customization
-Use the `--url` argument to select one of the predefined pages. Edit `displaypi.py` if you want to add more URLs or adjust how Chromium is launched.
+Use the `--urls` argument to select which predefined pages are opened as tabs. While Chromium is running press **F5** to switch to the next tab and **F6** to go back. Edit `displaypi.py` if you want to add more URLs or adjust how Chromium is launched.

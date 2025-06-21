@@ -7,6 +7,8 @@ This simple script opens a single URL in fullscreen (kiosk) mode using the
 
 import argparse
 import subprocess
+from typing import List
+
 
 
 # URLs that can be displayed. ``flightradar`` is the default page while
@@ -23,24 +25,46 @@ CHROMIUM_CMD = [
 ]
 
 
-def launch_chromium(url: str) -> subprocess.Popen:
-    """Launch Chromium pointing to ``url`` in kiosk mode."""
-    cmd = CHROMIUM_CMD + [url]
+def launch_chromium(urls: List[str]) -> subprocess.Popen:
+    """Launch Chromium pointing to ``urls`` in kiosk mode."""
+    cmd = CHROMIUM_CMD + urls
     return subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Launch Chromium in kiosk mode")
     parser.add_argument(
-        "--url",
+        "--urls",
+        nargs="+",
         choices=URLS.keys(),
-        default="flightradar",
-        help="Which page to display",
+        default=list(URLS.keys()),
+        help="Pages to open as tabs",
     )
     args = parser.parse_args()
 
-    url = URLS[args.url]
-    proc = launch_chromium(url)
+    from pynput import keyboard as kb
+
+    urls = [URLS[name] for name in args.urls]
+    proc = launch_chromium(urls)
+
+    controller = kb.Controller()
+
+    def on_press(key):
+        if key == kb.Key.f5:
+            controller.press(kb.Key.ctrl)
+            controller.press(kb.Key.tab)
+            controller.release(kb.Key.tab)
+            controller.release(kb.Key.ctrl)
+        elif key == kb.Key.f6:
+            controller.press(kb.Key.ctrl)
+            controller.press(kb.Key.shift)
+            controller.press(kb.Key.tab)
+            controller.release(kb.Key.tab)
+            controller.release(kb.Key.shift)
+            controller.release(kb.Key.ctrl)
+
+    listener = kb.Listener(on_press=on_press)
+    listener.start()
 
     try:
         proc.wait()
@@ -49,6 +73,8 @@ def main() -> None:
     finally:
         proc.terminate()
         proc.wait()
+        listener.stop()
+        listener.join()
 
 
 if __name__ == "__main__":
