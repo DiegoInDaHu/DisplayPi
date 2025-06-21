@@ -6,25 +6,16 @@ This repository contains a small program to display a web page in full screen on
 - Raspberry Pi OS 64‑bit with graphical environment
 - Python 3
 - `chromium-browser`
-- `xdotool`
-- `RPi.GPIO` (usually installed by default on Raspberry Pi OS)
 
 Install Chromium if it is not already available:
 ```bash
 sudo apt-get update
 sudo apt-get install -y chromium-browser
-sudo apt-get install -y xdotool python3-rpi.gpio
-```
-
-Install the Python module with pip:
-
-```bash
-pip install -r requirements.txt
 ```
 
 ## Usage
 1. Copy this repository to `/home/pi/DisplayPi` on your Raspberry Pi.
-2. Optionally edit `displaypi.py` to change the URLs.
+2. Optionally edit `displaypi.py` to change the URL.
 3. Install the systemd service:
 
 ```bash
@@ -41,6 +32,5 @@ sudo systemctl stop displaypi.service
 ```
 
 ## Customization
-`displaypi.py` launches Chromium in kiosk mode with two tabs. A push button
-connected to GPIO 27 toggles between them. Edit the script if you need to change
-the URLs or adjust how Chromium is launched.
+Edit `displaypi.py` if you want to change the URL or adjust how Chromium is
+launched.
