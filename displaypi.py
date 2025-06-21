@@ -5,10 +5,16 @@ This simple script opens a single URL in fullscreen (kiosk) mode using the
 ``chromium-browser`` application that comes with Raspberry Pi OS.
 """
 
+import argparse
 import subprocess
 
-# URL to display
-URL = "https://www.flightradar24.com/simple/"
+
+# URLs that can be displayed. ``flightradar`` is the default page while
+# ``local`` can be used to show a locally hosted web application.
+URLS = {
+    "flightradar": "https://www.flightradar24.com/simple/",
+    "local": "http://localhost:3000",
+}
 
 CHROMIUM_CMD = [
     "chromium-browser",
@@ -24,7 +30,17 @@ def launch_chromium(url: str) -> subprocess.Popen:
 
 
 def main() -> None:
-    proc = launch_chromium(URL)
+    parser = argparse.ArgumentParser(description="Launch Chromium in kiosk mode")
+    parser.add_argument(
+        "--url",
+        choices=URLS.keys(),
+        default="flightradar",
+        help="Which page to display",
+    )
+    args = parser.parse_args()
+
+    url = URLS[args.url]
+    proc = launch_chromium(url)
 
     try:
         proc.wait()
