@@ -57,12 +57,22 @@ def main() -> None:
     controller = kb.Controller()
 
     def send_ctrl_tab(shift: bool = False) -> None:
-        """Simulate Ctrl+Tab (optionally with Shift) using xdotool if available."""
-        cmd = ["xdotool", "key", "--clearmodifiers", "ctrl+"]
-        cmd[-1] += "shift+Tab" if shift else "Tab"
+        """Simulate Ctrl+Tab (optionally with Shift) sending the shortcut to
+        Chromium if possible."""
+        key = "ctrl+" + ("shift+Tab" if shift else "Tab")
         try:
-            subprocess.run(cmd, check=True)
-        except (FileNotFoundError, subprocess.CalledProcessError):
+            # Activate Chromium window before sending the key to ensure the
+            # browser has focus. ``--class chromium`` matches ``chromium-browser``.
+            window_id = subprocess.check_output(
+                ["xdotool", "search", "--onlyvisible", "--class", "chromium"],
+                text=True,
+            ).splitlines()[0]
+            subprocess.run(["xdotool", "windowactivate", "--sync", window_id], check=True)
+            subprocess.run(
+                ["xdotool", "key", "--window", window_id, "--clearmodifiers", key],
+                check=True,
+            )
+        except Exception:
             controller.press(kb.Key.ctrl)
             if shift:
                 controller.press(kb.Key.shift)
