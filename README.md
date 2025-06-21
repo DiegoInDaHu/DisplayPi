@@ -16,6 +16,12 @@ sudo apt-get install -y chromium-browser
 sudo apt-get install -y xdotool python3-rpi.gpio
 ```
 
+Install the Python module with pip:
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Usage
 1. Copy this repository to `/home/pi/DisplayPi` on your Raspberry Pi.
 2. Optionally edit `displaypi.py` to change the URLs.
